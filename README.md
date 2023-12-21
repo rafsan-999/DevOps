@@ -21,7 +21,12 @@ You should update the /etc/hosts file of all nodes(or at least of the master nod
     10.209.99.11 k8s-worker1--- worker1 node ip address
     10.209.99.12 k8s-worker2--- worker2 node ip address
     
-### Step 3: Set up the IPV4 bridge on all nodes 
+Step 3: Disable swap (For master and worker nodes)
+
+    swapoff -a
+    sed -i '/ swap / s/^/#/' /etc/fstab
+    
+### Step 4: Set up the IPV4 bridge on all nodes 
 to configure the IPV4 bridge on all nodes, execute the following commands on each node (For master and worker nodes).
 
     cat <<EOF | sudo tee /etc/modules-load.d/k8s.conf
