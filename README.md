@@ -10,6 +10,7 @@ Official Youtube Link: https://www.youtube.com/watch?v=lede7TJk1PE
     vi /etc/hosts  127.0.1.1 k8s-master
 
 ### Step 2: Update the /etc/hosts File for Hostname Resolution
+
 Setting up host names is not enough. We have to map hostnames to their IP addresses as well. 
 You should update the /etc/hosts file of all nodes(or at least of the master node), as shown below. 
 (Remember that you have to use the IP addresses of your nodes. I have only given holder values.) 
@@ -21,7 +22,7 @@ You should update the /etc/hosts file of all nodes(or at least of the master nod
     10.209.99.11 k8s-worker1--- worker1 node ip address
     10.209.99.12 k8s-worker2--- worker2 node ip address
     
-Step 3: Disable swap (For master and worker nodes)
+### Step 3: Disable swap (For master and worker nodes)
 
     swapoff -a
     sed -i '/ swap / s/^/#/' /etc/fstab
@@ -46,7 +47,7 @@ to configure the IPV4 bridge on all nodes, execute the following commands on eac
     
     # Apply sysctl params without reboot
     sudo sysctl --system
-### Step 4: Install kubelet, kubeadm, and kubectl on each node
+### Step 5: Install kubelet, kubeadm, and kubectl on each node
 
 Let’s install kubelet, kubeadm, and kubectl on each node to create a Kubernetes cluster. 
 They play an important role in managing a Kubernetes cluster.
@@ -97,7 +98,7 @@ You will want to start kubelet service whenever the machine boots up, which you 
 
     sudo systemctl enable kubelet.service
 
-### Step 5: Initialize the Kubernetes cluster on the master node:
+### Step 6: Initialize the Kubernetes cluster on the master node:
 
 When you initialize a Kubernetes control plane using kubeadm, several components are deployed to manage and orchestrate the cluster. 
 Some examples of these components are kube-apiserver, kube-controller-manager, kube-scheduler, etcd, kube-proxy. 
@@ -118,7 +119,7 @@ Here are the commands you need to do this on master node.
     sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
     sudo chown $(id -u):$(id -g) $HOME/.kube/config
 
-Step 6: Configure kubectl and Calico Run the following commands on the master node to deploy the Calico operator:
+Step 7: Configure kubectl and Calico Run the following commands on the master node to deploy the Calico operator:
 
     kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.26.1/manifests/tigera-operator.yaml
 Next, download the custom resources file for Calico, which contains definitions of the various resources that Calico will use.
@@ -132,9 +133,9 @@ Here, you're using the sed command to change the default CIDR value in the Calic
 Finally, tell kubectl to create the resources defined in the custom-resources.yaml file.
 
     kubectl create -f custom-resources.yaml
-### Step 7: Add worker nodes to the cluster only for worker node:
+### Step 8: Add worker nodes to the cluster only for worker node:
     kubeadm join 10.209.99.150:6443 --token 4ohoxu.pmnnk0gmtffta1rk         --discovery-token-ca-cert-hash sha256:859ac308bf59b59ac3a344799e840cc8b8651e8fa5453f9da23f0685ada550ee
-### Step 10: Verify the cluster and test
+### Step 9: Verify the cluster and test
 Finally, we want to verify whether our cluster is successfully created. By running the kubectl get no command, we can list all nodes that are part of the cluster
 
     kubectl get no
