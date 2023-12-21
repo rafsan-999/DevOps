@@ -143,7 +143,7 @@ we can list the pods from all namespaces in the cluster  by running the command:
 
     kubectl get po -A 
 
-
+demo
 
 
 
