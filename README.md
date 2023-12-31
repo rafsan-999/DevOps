@@ -1,5 +1,6 @@
 ## K8s version- 1.28.0 install on Ubuntu 22.04.2 LTS
-Official Documentation Link: https://www.cherryservers.com/blog/install-kubernetes-on-ubuntu
+Official Documentation Link: https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/
+link:https://www.cherryservers.com/blog/install-kubernetes-on-ubuntu
 Official Youtube Link: https://www.youtube.com/watch?v=lede7TJk1PE
 
 
@@ -60,22 +61,34 @@ as deploying applications, inspecting resources, and managing cluster operations
 
 Before installing them, you must update the package index with the command (For master and worker nodes):
 
-    apt-get update
+    sudo apt update
+we have to create a directory where we'll store a special key that verifies the authenticity of Kubernetes packages. 
+It's like checking an ID card before allowing someone into a building (For master and worker nodes).
+
+    sudo mkdir -m 755 /etc/apt/keyrings
 Next, we have to ensure that we can download and install packages from the internet securely (For master and worker nodes):
 
-    sudo apt-get install -y apt-transport-https ca-certificates curl
-This key is important to verify that the Kubernetes packages we download are genuine and haven't been tampered with (For master and worker nodes):
+    sudo apt-get install -y apt-transport-https ca-certificates curl gpg
 
-    curl -fsSL https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-archive-keyring.gpg
+Download the public signing key for the Kubernetes package repositories. The same signing key is used for all repositories so you can disregard the version in the URL (For master and worker nodes):
+
+    curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.29/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+
 Next, we need to tell the apt package manager where to find Kubernetes packages for downloading (For master and worker nodes):
 
     echo "deb [signed-by=/etc/apt/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
-Let’s refresh the apt package index to see new items by running the update command again (For master and worker nodes)
+Add the appropriate Kubernetes apt repository. Please note that this repository have packages only for Kubernetes 1.29; for other Kubernetes minor versions, 
+you need to change the Kubernetes minor version in the URL to match your desired minor version (you should also check that you are reading the documentation 
+for the version of Kubernetes that you plan to install) For master and worker nodes.
 
+    # This overwrites any existing configuration in /etc/apt/sources.list.d/kubernetes.list
+    echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.29/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
+Update the apt package index, install kubelet, kubeadm and kubectl, and pin their version (For master and worker nodes):
+
+    sudo apt-get update
+    sudo apt-get install -y kubelet kubeadm kubectl
+    sudo apt-mark hold kubelet kubeadm kubectl
     apt-get update
-Now we are ready to install kubelet, kubeadm, and kubectl by running the command below (for specific version) For (master and worker nodes):
-
-    apt install -y kubelet=1.28.0-00 kubeadm=1.28.0-00 kubectl=1.28.0-00
 Step 5: Install Docker (For master and worker nodes):
 
     sudo apt install docker.io
