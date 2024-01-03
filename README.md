@@ -22,6 +22,10 @@ You should update the /etc/hosts file of all nodes(or at least of the master nod
     10.209.99.10 k8s-master--- master node ip address
     10.209.99.11 k8s-worker1--- worker1 node ip address
     10.209.99.12 k8s-worker2--- worker2 node ip address
+### Ping Each Node
+    ping -c 4 Master
+    ping -c 4 Worker1 
+    ping -c 4 Worker2
     
 ### Step 3: Disable swap (For master and worker nodes)
 
